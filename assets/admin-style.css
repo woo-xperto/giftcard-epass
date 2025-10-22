@@ -1,0 +1,132 @@
+/* Epasscard and Giftcard CSS */
+
+/* Status message */
+#giftEpasss #statusMessage {
+  background-color: #e0f3ff;
+  color: #0078d4;
+  padding: 10px 15px;
+  border-left: 5px solid #0078d4;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-weight: 500;
+  display:none;
+}
+
+/* Headings */
+#giftEpasss .fields-container h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 1.4em;
+}
+
+/* Field list */
+#giftEpasss .field-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Individual field item */
+#giftEpasss .field-item {
+  background-color: #fff;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+/* Dropdown styling */
+#giftEpasss .field-item select {
+  font-size: 0.95em;
+}
+
+/* Buttons */
+#giftEpasss .action-buttons {
+  margin-top: 25px;
+  display: flex;
+  gap: 15px;
+}
+
+#giftEpasss button.success {
+  background-color: #7d60a9;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+#giftEpasss button:hover {
+  opacity: 0.9;
+}
+#giftEpasss .action-buttons .loading-spinner{
+    display:none;
+}
+
+/* Epasscard list CSS */
+#epasscard-template-wrap .epasscard-template {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+  padding: 30px 20px;
+  margin-top: 20px;
+}
+#epasscard-template-wrap .epasscard-template h4.epasscard-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 20px;
+}
+#epasscard-template-wrap .top-part {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#epasscard-template-wrap .epasscard-status {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#epasscard-template-wrap .epasscard-status > span {
+  font-weight: 700;
+  line-height: 1;
+  background: #e3ebf7;
+  color: #285192;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+#epasscard-template-wrap .epasscard-status > span:nth-child(2) {
+  background: #d6fae4;
+  color: #0e7537;
+}
+
+#epasscard-template-wrap .epasscard-status > span:nth-child(3) {
+  background: #fae5e9;
+  color: #b0233a;
+}
+#epasscard-template-wrap .bottom-part .left-part > span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.epasscard-pagination {
+  margin-top: 20px;
+}
+
+.epasscard-pagination a.epasscard-page-link {
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+.epasscard-pagination a.epasscard-page-link.active {
+  background-color: #000;
+  color: #fff;
+  border-radius: 5px;
+}
