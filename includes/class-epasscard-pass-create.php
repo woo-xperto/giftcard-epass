@@ -5,7 +5,8 @@ class Gift_To_Epasscard_Pass_Create
     {
         //Pass generate
         add_action('wodgc_giftcard_created', [$this, 'wodgc_generate_pass'], 10, 2);
-        add_action('wodgc_giftcard_created_manual', [$this, 'wodgc_generate_pass'], 10, 2);
+        add_action('wodgc_giftcard_created_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
+        add_action('wodgc_giftcard_updated_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
 
         //Pass create by admin
         add_action('wp_ajax_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
