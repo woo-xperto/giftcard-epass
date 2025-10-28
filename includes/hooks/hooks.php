@@ -241,3 +241,38 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
         </div>
     </div><?php
 });
+
+
+/**
+ * Gift Card Actions Table Heading
+ */
+function send_giftcard_table_heading()
+{
+    ?>
+    <th scope="col">
+        <?php 
+        //phpcs:ignore
+        esc_html_e('Epass Action', 'gift-card-wooxperto-llc'); ?>
+    </th>
+    <?php
+}
+add_action('epass_generate_button_heading', 'send_giftcard_table_heading');
+
+
+/**
+ * Gift Card Actions Table Data
+ */
+function send_giftcard_table_buitton($passLink, $gift_card_id)
+{
+    ?>
+    <td>
+        <?php if ($passLink) {
+            echo '<a href="'.esc_url($passLink).'" target="_blank">Download Pass</a>';
+        } else {
+            echo '<a href="#" class="pass_create" data-id="'.esc_attr($gift_card_id).'">Create Pass <span class="loading-spinner"></span></a>';
+        }
+        ?>
+    </td>
+    <?php
+}
+add_action('epass_generate_button', 'send_giftcard_table_buitton', 10, 2);

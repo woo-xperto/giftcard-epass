@@ -89,7 +89,35 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 3000); // 3000ms = 3 seconds
         });
 
-        
+
     });
   }
+
+  //Pass create by admin from gift card
+  if (document.querySelector(".pass_create")) {
+    document.querySelector(".pass_create").addEventListener("click", function () {
+      const gift_card_id = this.getAttribute("data-id");
+      this.querySelector(".loading-spinner").style.display = "inline-block";
+
+      fetch(egw_obj.ajaxurl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          action: "wodgc_pass_create_by_admin",
+          giftcard_id: gift_card_id,
+          nonce: egw_obj.nonce,
+        }),
+      })
+        .then((response) => response.text())
+        .then((result) => {
+          location.reload();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    });
+  }
+
 });

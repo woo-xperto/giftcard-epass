@@ -6,26 +6,30 @@
  * Author: WebCartisan
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-  * Text Domain: epasscard-giftcard-extension
+ * Text Domain: epasscard-giftcard-extension
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-final class Epasscard_Giftcard_Extension{
+final class Epasscard_Giftcard_Extension
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->define_constants();
         $this->include_files();
         $this->init_components();
     }
 
-    private function define_constants() {
-        define( 'EPASSCARD_EXTENSION_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-        define( 'EPASSCARD_EXTENSION_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+    private function define_constants()
+    {
+        define('EPASSCARD_EXTENSION_PLUGIN_URL', plugin_dir_url(__FILE__));
+        define('EPASSCARD_EXTENSION_PLUGIN_PATH', plugin_dir_path(__FILE__));
     }
 
-    private function include_files() {
+    private function include_files()
+    {
         require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin.php';
         require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin-ajax.php';
         require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-pass-create.php';
@@ -33,7 +37,8 @@ final class Epasscard_Giftcard_Extension{
         require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/filters/filters.php';
     }
 
-    private function init_components() {
+    private function init_components()
+    {
         $admin_menu = new Epasscard_Giftcard_Admin();
         $admin_menu->init_hooks();
 
@@ -42,6 +47,6 @@ final class Epasscard_Giftcard_Extension{
     }
 }
 
-add_action( 'plugins_loaded', function() {
+add_action('plugins_loaded', function () {
     new Epasscard_Giftcard_Extension();
-} );
+});

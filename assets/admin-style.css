@@ -62,7 +62,8 @@
 #giftEpasss button:hover {
   opacity: 0.9;
 }
-#giftEpasss .action-buttons .loading-spinner{
+#giftEpasss .action-buttons .loading-spinner,
+.pass_create > .loading-spinner{
     display:none;
 }
 
