@@ -38,7 +38,6 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                 $api_key = get_option('epasscard_api_key', '');
 
                                 // Get current URL parameters
-                                // Get current URL parameters
                                 $current_url = add_query_arg(null, null);
                                 $current_params = [];
 
@@ -48,7 +47,8 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                 }
 
 
-                                $api_url = 'https://api.epasscard.com/api/external-apis/all-templates/' . $organization_id . '?limit=' . $per_page . '&offset=' . $offset . '&search=';
+                                //$api_url = 'https://api.epasscard.com/api/external-apis/all-templates/' . $organization_id . '?limit=' . $per_page . '&offset=' . $offset . '&search=';
+                                $api_url = EPASSCARD_API_URL.'get-pass-templates?page=' . $current_page;
 
                                 $response = wp_remote_get($api_url, [
                                     'headers' => [
@@ -148,10 +148,10 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                             <?php
                                 } else { ?>
                             <div id="epasscard-template-wrap"><?php
-                            if (isset($data['data']) && $data['status'] == 200 && !empty($data['data']['results'])) {
+                            if (isset($data) && ! empty($data['templates']) && is_array($data['templates'])) {
                                 ?>
                                     <div id="epasscard-template-wrap"><?php
-                                    foreach ($data['data']['results'] as $template) {
+                                    foreach ($data['templates'] as $template) {
                                         // Create URL for map link
                                         $map_url = add_query_arg('pass-uid', $template['uid'], $current_url); ?>
                                             <div class="epasscard-template">

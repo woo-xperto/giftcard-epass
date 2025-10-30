@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => response.text())
         .then((result) => {
-          location.reload();
+          //location.reload();
         })
         .catch((error) => {
           console.error("Error:", error);

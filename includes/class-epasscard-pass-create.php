@@ -8,16 +8,21 @@ class Gift_To_Epasscard_Pass_Create
         add_action('wodgc_giftcard_created_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
         add_action('wodgc_giftcard_updated_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
 
+        //Pass delete
+        add_action('wodgc_giftcard_deleted_by_admin', [$this, 'wodgc_delete_pass'], 10, 1);
+
+
         //Pass create by admin
         add_action('wp_ajax_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
         add_action('wp_ajax_nopriv_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
     }
 
     //Pass create in Epasscard
-    public function wodgc_generate_pass($giftcard_id, $identifier) {
+    public function wodgc_generate_pass($giftcard_id, $identifier)
+    {
         global $wpdb;
         $mapping = get_option('giftcard_field_mapping', []);
-        
+
         $giftcard_table = $wpdb->prefix . 'wx_gift_cards';
         //phpcs:ignore
         $query = $wpdb->prepare("SELECT * FROM {$giftcard_table} WHERE id = %d", $giftcard_id);
@@ -30,7 +35,7 @@ class Gift_To_Epasscard_Pass_Create
 
         $uid = get_option('mapped_template_uid', '');
         $api_key = get_option('epasscard_api_key', '');
-        $api_url = 'https://api.epasscard.com/api/pass-template/template-details/' . $uid;
+        $api_url = API_URL_EPASSCARD . "template-details/$uid";
 
 
         $response = wp_remote_get($api_url, [
@@ -76,7 +81,7 @@ class Gift_To_Epasscard_Pass_Create
                 ];
             }
 
-            $api_url = 'https://api.epasscard.com/api/wallet-pass/save-field-value/' . $uid;
+            $api_url = API_URL_EPASSCARD . "create-single-pass/$uid";
             $body = ['additionalFieldsValue' => $modifiedFields];
 
             $args = [
@@ -100,7 +105,7 @@ class Gift_To_Epasscard_Pass_Create
 
         // UPDATE
         if ($identifier === "update_giftcard") {
-            
+
             $mappedData = $this->wodgc_map_giftcard_fields($giftcard, $mapping);
 
             $epassDataJson = $giftcard['epass_data'];
@@ -134,7 +139,8 @@ class Gift_To_Epasscard_Pass_Create
                 'timeout' => 30,
             ];
 
-            $response = wp_remote_request('https://api.epasscard.com/api/wallet-pass/update-pass/', $args);
+            $api_url = API_URL_EPASSCARD . "update-single-pass/";
+            $response = wp_remote_request($api_url, $args);
             $response_body = json_decode($response['body'], true);
 
             $epassData = [
@@ -158,7 +164,8 @@ class Gift_To_Epasscard_Pass_Create
     }
 
     // AJAX handler for admin creation
-    public function wodgc_pass_create_by_admin() {
+    public function wodgc_pass_create_by_admin()
+    {
         check_ajax_referer('wodgc_nonce_action', 'nonce');
 
         $giftcard_id = isset($_POST['giftcard_id']) ? sanitize_text_field(wp_unslash($_POST['giftcard_id'])) : '';
@@ -168,7 +175,8 @@ class Gift_To_Epasscard_Pass_Create
     }
 
     // Reusable field mapping function
-    private function wodgc_map_giftcard_fields($giftcard, $mapping) {
+    private function wodgc_map_giftcard_fields($giftcard, $mapping)
+    {
         $fieldMapping = [
             1 => 'giftcard_number',
             2 => 'product_id',
@@ -190,6 +198,35 @@ class Gift_To_Epasscard_Pass_Create
         }
 
         return $mappedData;
+    }
+
+    // Delete single pass
+    public function wodgc_delete_pass($singlePassUid)
+    {
+
+        if (!$singlePassUid) {
+            return;
+        }
+        $api_key = get_option('epasscard_api_key', '');
+        $api_url = API_URL_EPASSCARD . "delete-single-pass/$singlePassUid";
+
+        $args = [
+            'method' => 'DELETE',
+            'headers' => [
+                'Accept' => 'application/json',
+                'x-api-key' => $api_key,
+            ],
+            'timeout' => 30,
+        ];
+
+        $response = wp_remote_request($api_url, $args);
+
+        if (is_wp_error($response)) {
+            error_log('Delete request failed: ' . $response->get_error_message());
+        } else {
+            error_log('Delete request succeeded: ' . wp_remote_retrieve_body($response));
+        }
+
     }
 
 }
