@@ -48,7 +48,7 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
 
 
                                 //$api_url = 'https://api.epasscard.com/api/external-apis/all-templates/' . $organization_id . '?limit=' . $per_page . '&offset=' . $offset . '&search=';
-                                $api_url = EPASSCARD_API_URL.'get-pass-templates?page=' . $current_page;
+                                $api_url = EPASSCARD_API_URL . 'get-pass-templates?page=' . $current_page;
 
                                 $response = wp_remote_get($api_url, [
                                     'headers' => [
@@ -148,7 +148,7 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                             <?php
                                 } else { ?>
                             <div id="epasscard-template-wrap"><?php
-                            if (isset($data) && ! empty($data['templates']) && is_array($data['templates'])) {
+                            if (isset($data) && !empty($data['templates']) && is_array($data['templates'])) {
                                 ?>
                                     <div id="epasscard-template-wrap"><?php
                                     foreach ($data['templates'] as $template) {
@@ -244,35 +244,14 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
 
 
 /**
- * Gift Card Actions Table Heading
- */
-function send_giftcard_table_heading()
-{
-    ?>
-    <th scope="col">
-        <?php 
-        //phpcs:ignore
-        esc_html_e('Epass Action', 'gift-card-wooxperto-llc'); ?>
-    </th>
-    <?php
-}
-add_action('epass_generate_button_heading', 'send_giftcard_table_heading');
-
-
-/**
  * Gift Card Actions Table Data
  */
 function send_giftcard_table_buitton($passLink, $gift_card_id)
 {
-    ?>
-    <td>
-        <?php if ($passLink) {
-            echo '<a href="'.esc_url($passLink).'" target="_blank">Download Pass</a>';
-        } else {
-            echo '<a href="#" class="pass_create" data-id="'.esc_attr($gift_card_id).'">Create Pass <span class="loading-spinner"></span></a>';
-        }
-        ?>
-    </td>
-    <?php
+    if ($passLink) {
+        echo '<a href="' . esc_url($passLink) . '" target="_blank"><span class="dashicons dashicons-download"></span></a>';
+    } else {
+        echo '<a href="#" class="pass_create" data-id="' . esc_attr($gift_card_id) . '"><span class="dashicons dashicons-welcome-write-blog"></span><span class="loading-spinner"></span></a>';
+    }
 }
 add_action('epass_generate_button', 'send_giftcard_table_buitton', 10, 2);
