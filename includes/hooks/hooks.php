@@ -46,8 +46,6 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                     parse_str($parsed_url['query'], $current_params);
                                 }
 
-
-                                //$api_url = 'https://api.epasscard.com/api/external-apis/all-templates/' . $organization_id . '?limit=' . $per_page . '&offset=' . $offset . '&search=';
                                 $api_url = EPASSCARD_API_URL . 'get-pass-templates?page=' . $current_page;
 
                                 $response = wp_remote_get($api_url, [
@@ -68,7 +66,7 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                 $uid = sanitize_text_field($raw_uid);
 
                                 if (!empty($uid)) {
-                                    $api_url = 'https://api.epasscard.com/api/pass-template/template-details/' . $uid;
+                                    $api_url = API_URL_EPASSCARD.'template-details/' . $uid;
                                     $api_key = get_option('epasscard_api_key', '');
 
                                     $response = wp_remote_get($api_url, [

@@ -116,7 +116,18 @@
   align-items: center;
   gap: 10px;
 }
-
+.epasscard-dropdown-container > a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #000;
+    padding: 10px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    
+}
 .epasscard-pagination {
   margin-top: 20px;
 }
