@@ -9,8 +9,7 @@ add_filter( 'wodgc_sidebar_menu_items', function( $menus ) {
     ];
 
     // Insert before the last item
-    $insert_position = count( $menus ) - 3;
-    array_splice( $menus, $insert_position, 0, [ $epasscard_menu ] );
+    array_splice( $menus, 2, 0, [ $epasscard_menu ] );
 
     return $menus;
 });
