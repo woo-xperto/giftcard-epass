@@ -11,6 +11,9 @@ class Gift_To_Epasscard_Pass_Create
         //Pass delete
         add_action('wodgc_giftcard_deleted_by_admin', [$this, 'wodgc_delete_pass'], 10, 1);
 
+        //Pass update when Giftcard used in order
+        add_action('wodgc_send_giftcard_id', [$this, 'wodgc_update_single_pass'], 14, 1);
+
 
         //Pass create by admin
         add_action('wp_ajax_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
@@ -106,52 +109,11 @@ class Gift_To_Epasscard_Pass_Create
         // UPDATE
         if ($identifier === "update_giftcard") {
 
-            $mappedData = $this->wodgc_map_giftcard_fields($giftcard, $mapping);
-
-            $epassDataJson = $giftcard['epass_data'];
-            $epassData = json_decode($epassDataJson, true);
-            $singlePassUid = $epassData['passUid'] ?? null;
-
-            $fieldsForPut = [];
-            foreach ($passDetails['additionFields'] as $field) {
-                $fieldName = $field['field_name'];
-                $fieldsForPut[] = [
-                    'field_name' => $field['field_name'],
-                    'field_value' => $mappedData[$fieldName] ?? '',
-                    'uid' => $field['uid'],
-                    'field_type' => $field['field_type'],
-                    'required' => $field['required'],
-                ];
-            }
-
-            $putBody = [
-                'fields' => $fieldsForPut,
-                'passUid' => $singlePassUid,
-            ];
-
-            $args = [
-                'method' => 'PUT',
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'x-api-key' => $api_key,
-                ],
-                'body' => wp_json_encode($putBody),
-                'timeout' => 30,
-            ];
-
-            $api_url = API_URL_EPASSCARD . "update-single-pass/";
-            $response = wp_remote_request($api_url, $args);
-            $response_body = json_decode($response['body'], true);
-
-            $epassData = [
-                'fields' => $fieldsForPut,
-                'passUid' => $singlePassUid,
-                'passLink' => $response_body['passLink'],
-            ];
+            $epassData = $this->wodgc_update_single_pass($giftcard_id);
         }
 
         // Final DB update
-        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+        if (isset($epassData['passLink']) && $epassData['passLink']) {
             //phpcs:ignore
             $wpdb->update(
                 $giftcard_table,
@@ -160,6 +122,7 @@ class Gift_To_Epasscard_Pass_Create
                 ['%s'],
                 ['%d']
             );
+
         }
     }
 
@@ -198,6 +161,96 @@ class Gift_To_Epasscard_Pass_Create
         }
 
         return $mappedData;
+    }
+
+    //Update single pass
+    public function wodgc_update_single_pass($giftcard_id)
+    {
+
+        global $wpdb;
+        $mapping = get_option('giftcard_field_mapping', []);
+
+        $giftcard_table = $wpdb->prefix . 'wx_gift_cards';
+        //phpcs:ignore
+        $query = $wpdb->prepare("SELECT * FROM {$giftcard_table} WHERE id = %d", $giftcard_id);
+        //phpcs:ignore
+        $giftcard = $wpdb->get_row($query, ARRAY_A);
+
+        if (!$giftcard) {
+            return;
+        }
+
+        $uid = get_option('mapped_template_uid', '');
+        $api_key = get_option('epasscard_api_key', '');
+        $api_url = API_URL_EPASSCARD . "template-details/$uid";
+
+
+        $response = wp_remote_get($api_url, [
+            'headers' => ['x-api-key' => $api_key],
+        ]);
+
+        if (is_wp_error($response)) {
+            return;
+        }
+
+        $passDetails = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (
+            empty($passDetails) ||
+            !isset($passDetails['additionFields']) ||
+            !is_array($passDetails['additionFields']) ||
+            empty($passDetails['additionFields'])
+        ) {
+            return;
+        }
+
+
+        $mappedData = $this->wodgc_map_giftcard_fields($giftcard, $mapping);
+
+        $epassDataJson = $giftcard['epass_data'];
+        $epassData = json_decode($epassDataJson, true);
+        $singlePassUid = $epassData['passUid'] ?? null;
+
+        $fieldsForPut = [];
+        foreach ($passDetails['additionFields'] as $field) {
+            $fieldName = $field['field_name'];
+            $fieldsForPut[] = [
+                'field_name' => $field['field_name'],
+                'field_value' => $mappedData[$fieldName] ?? '',
+                'uid' => $field['uid'],
+                'field_type' => $field['field_type'],
+                'required' => $field['required'],
+            ];
+        }
+
+        $putBody = [
+            'fields' => $fieldsForPut,
+            'passUid' => $singlePassUid,
+        ];
+
+        $args = [
+            'method' => 'PUT',
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'x-api-key' => $api_key,
+            ],
+            'body' => wp_json_encode($putBody),
+            'timeout' => 30,
+        ];
+
+        $api_url = API_URL_EPASSCARD . "update-single-pass/";
+        $response = wp_remote_request($api_url, $args);
+        $response_body = json_decode($response['body'], true);
+
+
+        $epassData = [
+            'fields' => $fieldsForPut,
+            'passUid' => $singlePassUid,
+            'passLink' => $response_body['passLink'],
+        ];
+
+        return $epassData;
+
     }
 
     // Delete single pass

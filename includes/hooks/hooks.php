@@ -30,7 +30,7 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                 <?php $mapping = get_option('giftcard_field_mapping', []);
 
                                 // Plugin is active
-                                $per_page = 10;
+                                $per_page = 5;
                                 $current_page = isset($_GET['epasscard_page']) ? absint($_GET['epasscard_page']) : 1;
                                 $offset = ($current_page - 1) * $per_page;
                                 $organization_id = get_option('epasscard_organization_id', '');
@@ -187,9 +187,8 @@ add_action('wodgc_render_epasscard_tab', function ($tab) { ?>
                                         <?php } ?>
                                     </div>
                                     <?php
-
-
-                                    $total_items = $data['data']['count'] ?? 0;
+                                    
+                                    $total_items = $data['total']['total_templates'] ?? 0;
                                     $total_pages = ceil($total_items / $per_page);
 
                                     // Show pagination only when needed
