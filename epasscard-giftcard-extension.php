@@ -12,42 +12,42 @@
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
-final class Epasscard_Giftcard_Extension
+final class EGE_Giftcard_Extension
 {
 
     public function __construct()
     {
-        $this->define_constants();
-        $this->include_files();
-        $this->init_components();
+        $this->ege_define_constants();
+        $this->ege_include_files();
+        $this->ege_init_components();
     }
 
-    private function define_constants()
+    private function ege_define_constants()
     {
-        define('EPASSCARD_EXTENSION_PLUGIN_URL', plugin_dir_url(__FILE__));
-        define('EPASSCARD_EXTENSION_PLUGIN_PATH', plugin_dir_path(__FILE__));
-        define('API_URL_EPASSCARD', 'https://api.epasscard.com/api/public/v1/');
+        define('EGE_PLUGIN_URL', plugin_dir_url(__FILE__));
+        define('EGE_PLUGIN_PATH', plugin_dir_path(__FILE__));
+        define('EGE_API_URL', 'https://api.epasscard.com/api/public/v1/');
     }
 
-    private function include_files()
+    private function ege_include_files()
     {
-        require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin.php';
-        require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin-ajax.php';
-        require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/class-epasscard-pass-create.php';
-        require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/hooks/hooks.php';
-        require_once EPASSCARD_EXTENSION_PLUGIN_PATH . 'includes/filters/filters.php';
+        require_once EGE_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin.php';
+        require_once EGE_PLUGIN_PATH . 'includes/class-epasscard-giftcard-admin-ajax.php';
+        require_once EGE_PLUGIN_PATH . 'includes/class-epasscard-pass-create.php';
+        require_once EGE_PLUGIN_PATH . 'includes/hooks/hooks.php';
+        require_once EGE_PLUGIN_PATH . 'includes/filters/filters.php';
     }
 
-    private function init_components()
+    private function ege_init_components()
     {
-        $admin_menu = new Epasscard_Giftcard_Admin();
-        $admin_menu->init_hooks();
+        $admin_menu = new EGE_Admin();
+        $admin_menu->ege_init_hooks();
 
-        new Epasscard_Giftcard_Ajax();
-        new Gift_To_Epasscard_Pass_Create();
+        new EGE_Ajax();
+        new EGE_Pass_Create();
     }
 }
 
 add_action('plugins_loaded', function () {
-    new Epasscard_Giftcard_Extension();
+    new EGE_Giftcard_Extension();
 });

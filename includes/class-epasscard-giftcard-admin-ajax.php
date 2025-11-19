@@ -1,15 +1,15 @@
 <?php
-class Epasscard_Giftcard_Ajax
+class EGE_Ajax
 {
     public function __construct()
     {
         // Handle AJAX request to field map with epasscard
-        add_action('wp_ajax_wodgc_generate_epasscard_map', [$this, 'wodgc_generate_epasscard_map']);
-        add_action('wp_ajax_nopriv_wodgc_generate_epasscard_map', [$this, 'wodgc_generate_epasscard_map']);
+        add_action('wp_ajax_ege_generate_epasscard_map', [$this, 'ege_generate_epasscard_map']);
+        add_action('wp_ajax_nopriv_ege_generate_epasscard_map', [$this, 'ege_generate_epasscard_map']);
     }
-    public function wodgc_generate_epasscard_map()
+    public function ege_generate_epasscard_map()
     {
-        check_ajax_referer('wodgc_nonce_action', 'nonce');
+        check_ajax_referer('ege_nonce_action', 'nonce');
         
         // phpcs:ignore
         $mapping = isset($_POST['mapping']) ? json_decode(stripslashes($_POST['mapping']), true) : [];

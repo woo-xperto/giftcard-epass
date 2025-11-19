@@ -1,11 +1,11 @@
 <?php
 
-class Epasscard_Giftcard_Admin {
+class EGE_Admin {
 
-    public function init_hooks() {
-        add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ] );
+    public function ege_init_hooks() {
+        add_action( 'admin_enqueue_scripts', [ $this, 'ege_admin_assets' ] );
     }
-    public function enqueue_admin_assets( $hook ) {
+    public function ege_admin_assets( $hook ) {
         // Only load on our plugin's admin page
         // if ( $hook !== 'toplevel_page_epasscard-giftcard' ) {
         //     return;
@@ -13,25 +13,25 @@ class Epasscard_Giftcard_Admin {
 
         // Enqueue CSS
         wp_enqueue_style(
-            'epasscard-admin-style',
-            EPASSCARD_EXTENSION_PLUGIN_URL . 'assets/admin-style.css',
+            'ege-admin-style',
+            EGE_PLUGIN_URL . 'assets/admin-style.css',
             [],
             '1.0.0'
         );
 
         // Enqueue JS
         wp_enqueue_script(
-            'epasscard-admin-script',
-            EPASSCARD_EXTENSION_PLUGIN_URL . 'assets/admin-script.js',
+            'ege-admin-script',
+            EGE_PLUGIN_URL . 'assets/admin-script.js',
             [ 'jquery' ],
             '1.0.0',
             true
         );
 
         //Localize for ajax
-        wp_localize_script('epasscard-admin-script', 'egw_obj', [
+        wp_localize_script('ege-admin-script', 'ege_obj', [
                     'ajaxurl' => admin_url('admin-ajax.php'),
-                    'nonce'   => wp_create_nonce('wodgc_nonce_action'),
+                    'nonce'   => wp_create_nonce('ege_nonce_action'),
                 ]);
 
     }

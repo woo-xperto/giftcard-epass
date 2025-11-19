@@ -53,17 +53,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .map(([key, value]) => `$mapping['${key}'] = '${value}';`)
         .join("\n");
 
-      fetch(egw_obj.ajaxurl, {
+      fetch(ege_obj.ajaxurl, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          action: "wodgc_generate_epasscard_map",
+          action: "ege_generate_epasscard_map",
           mapping: JSON.stringify(mappedData),
           template_id: template_id,
           template_uid: template_uid,
-          nonce: egw_obj.nonce,
+          nonce: ege_obj.nonce,
         }),
       })
         .then((response) => response.text())
@@ -99,15 +99,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const gift_card_id = this.getAttribute("data-id");
       this.querySelector(".loading-spinner").style.display = "inline-block";
 
-      fetch(egw_obj.ajaxurl, {
+      fetch(ege_obj.ajaxurl, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: new URLSearchParams({
-          action: "wodgc_pass_create_by_admin",
+          action: "ege_pass_create_by_admin",
           giftcard_id: gift_card_id,
-          nonce: egw_obj.nonce,
+          nonce: ege_obj.nonce,
         }),
       })
         .then((response) => response.text())

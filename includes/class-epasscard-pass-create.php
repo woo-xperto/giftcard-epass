@@ -1,27 +1,27 @@
 <?php
-class Gift_To_Epasscard_Pass_Create
+class EGE_Pass_Create
 {
     public function __construct()
     {
         //Pass generate
-        add_action('wodgc_giftcard_created', [$this, 'wodgc_generate_pass'], 10, 2);
-        add_action('wodgc_giftcard_created_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
-        add_action('wodgc_giftcard_updated_by_admin', [$this, 'wodgc_generate_pass'], 10, 2);
+        add_action('wodgc_giftcard_created', [$this, 'ege_generate_pass'], 10, 2);
+        add_action('wodgc_giftcard_created_by_admin', [$this, 'ege_generate_pass'], 10, 2);
+        add_action('wodgc_giftcard_updated_by_admin', [$this, 'ege_generate_pass'], 10, 2);
 
         //Pass delete
-        add_action('wodgc_giftcard_deleted_by_admin', [$this, 'wodgc_delete_pass'], 10, 1);
+        add_action('wodgc_giftcard_deleted_by_admin', [$this, 'ege_delete_pass'], 10, 1);
 
         //Pass update when Giftcard used in order
-        add_action('wodgc_send_giftcard_id', [$this, 'wodgc_update_single_pass'], 14, 1);
+        add_action('wodgc_send_giftcard_id', [$this, 'ege_update_single_pass'], 14, 1);
 
 
         //Pass create by admin
-        add_action('wp_ajax_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
-        add_action('wp_ajax_nopriv_wodgc_pass_create_by_admin', [$this, 'wodgc_pass_create_by_admin']);
+        add_action('wp_ajax_ege_pass_create_by_admin', [$this, 'ege_pass_create_by_admin']);
+        add_action('wp_ajax_nopriv_ege_pass_create_by_admin', [$this, 'ege_pass_create_by_admin']);
     }
 
     //Pass create in Epasscard
-    public function wodgc_generate_pass($giftcard_id, $identifier)
+    public function ege_generate_pass($giftcard_id, $identifier)
     {
         global $wpdb;
         $mapping = get_option('giftcard_field_mapping', []);
@@ -38,7 +38,7 @@ class Gift_To_Epasscard_Pass_Create
 
         $uid = get_option('mapped_template_uid', '');
         $api_key = get_option('epasscard_api_key', '');
-        $api_url = API_URL_EPASSCARD . "template-details/$uid";
+        $api_url = EGE_API_URL . "template-details/$uid";
 
 
         $response = wp_remote_get($api_url, [
@@ -66,7 +66,7 @@ class Gift_To_Epasscard_Pass_Create
 
         // CREATE
         if ($identifier === "create_giftcard" && $passLimit > $total_pass) {
-            $mappedData = $this->wodgc_map_giftcard_fields($giftcard, $mapping);
+            $mappedData = $this->ege_map_giftcard_fields($giftcard, $mapping);
 
             $modifiedFields = [];
             foreach ($passDetails['additionFields'] as $field) {
@@ -84,7 +84,7 @@ class Gift_To_Epasscard_Pass_Create
                 ];
             }
 
-            $api_url = API_URL_EPASSCARD . "create-single-pass/$uid";
+            $api_url = EGE_API_URL . "create-single-pass/$uid";
             $body = ['additionalFieldsValue' => $modifiedFields];
 
             $args = [
@@ -109,7 +109,7 @@ class Gift_To_Epasscard_Pass_Create
         // UPDATE
         if ($identifier === "update_giftcard") {
 
-            $epassData = $this->wodgc_update_single_pass($giftcard_id);
+            $epassData = $this->ege_update_single_pass($giftcard_id);
         }
 
         // Final DB update
@@ -127,18 +127,18 @@ class Gift_To_Epasscard_Pass_Create
     }
 
     // AJAX handler for admin creation
-    public function wodgc_pass_create_by_admin()
+    public function ege_pass_create_by_admin()
     {
-        check_ajax_referer('wodgc_nonce_action', 'nonce');
+        check_ajax_referer('ege_nonce_action', 'nonce');
 
         $giftcard_id = isset($_POST['giftcard_id']) ? sanitize_text_field(wp_unslash($_POST['giftcard_id'])) : '';
         if ($giftcard_id) {
-            $this->wodgc_generate_pass($giftcard_id, "create_giftcard");
+            $this->ege_generate_pass($giftcard_id, "create_giftcard");
         }
     }
 
     // Reusable field mapping function
-    private function wodgc_map_giftcard_fields($giftcard, $mapping)
+    private function ege_map_giftcard_fields($giftcard, $mapping)
     {
         $fieldMapping = [
             1 => 'giftcard_number',
@@ -164,7 +164,7 @@ class Gift_To_Epasscard_Pass_Create
     }
 
     //Update single pass
-    public function wodgc_update_single_pass($giftcard_id)
+    public function ege_update_single_pass($giftcard_id)
     {
 
         global $wpdb;
@@ -182,7 +182,7 @@ class Gift_To_Epasscard_Pass_Create
 
         $uid = get_option('mapped_template_uid', '');
         $api_key = get_option('epasscard_api_key', '');
-        $api_url = API_URL_EPASSCARD . "template-details/$uid";
+        $api_url = EGE_API_URL . "template-details/$uid";
 
 
         $response = wp_remote_get($api_url, [
@@ -205,7 +205,7 @@ class Gift_To_Epasscard_Pass_Create
         }
 
 
-        $mappedData = $this->wodgc_map_giftcard_fields($giftcard, $mapping);
+        $mappedData = $this->ege_map_giftcard_fields($giftcard, $mapping);
 
         $epassDataJson = $giftcard['epass_data'];
         $epassData = json_decode($epassDataJson, true);
@@ -238,7 +238,7 @@ class Gift_To_Epasscard_Pass_Create
             'timeout' => 30,
         ];
 
-        $api_url = API_URL_EPASSCARD . "update-single-pass/";
+        $api_url = EGE_API_URL . "update-single-pass/";
         $response = wp_remote_request($api_url, $args);
         $response_body = json_decode($response['body'], true);
 
@@ -254,14 +254,14 @@ class Gift_To_Epasscard_Pass_Create
     }
 
     // Delete single pass
-    public function wodgc_delete_pass($singlePassUid)
+    public function ege_delete_pass($singlePassUid)
     {
 
         if (!$singlePassUid) {
             return;
         }
         $api_key = get_option('epasscard_api_key', '');
-        $api_url = API_URL_EPASSCARD . "delete-single-pass/$singlePassUid";
+        $api_url = EGE_API_URL . "delete-single-pass/$singlePassUid";
 
         $args = [
             'method' => 'DELETE',
@@ -273,12 +273,6 @@ class Gift_To_Epasscard_Pass_Create
         ];
 
         $response = wp_remote_request($api_url, $args);
-
-        if (is_wp_error($response)) {
-            error_log('Delete request failed: ' . $response->get_error_message());
-        } else {
-            error_log('Delete request succeeded: ' . wp_remote_retrieve_body($response));
-        }
 
     }
 
